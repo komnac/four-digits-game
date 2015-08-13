@@ -1,0 +1,22 @@
+{
+    "name": "komnac/four-digits-game",
+    "description": "4 digits game",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "komnac",
+            "email": "kirillkomlev@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "My\\": "src/My"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "ext-mysqli": "*"
+    }
+}
