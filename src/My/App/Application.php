@@ -2,6 +2,7 @@
 
 namespace My\App;
 
+use My\App\Database\Connection as DBConnection;
 use My\App\View\Factory as ViewFactory;
 
 /**
@@ -11,17 +12,17 @@ class Application {
     private $config;
 
     /**
-     * @param $configDir a path where configs located.
+     * @param $configPath a path where config file located.
      */
-    public function __construct($configDir)
+    public function __construct($configPath)
     {
-        $CONFIG = [];
-        $configs = glob($configDir . DIRECTORY_SEPARATOR . '*.php');
-        foreach ($configs as $config) {
-            require_once $config;
+        if (!file_exists($configPath)) {
+            throw new \Exception('Не удается найти файл конфигурации');
         }
 
-        $this->config = $CONFIG;
+        require_once $configPath;
+
+        $this->config = new Config();
     }
 
     /**
@@ -45,6 +46,9 @@ class Application {
         $viewFactory->setType($this->isCli() ? 'cli' : 'html');
 
         try {
+            $this->setupPhp();
+            $this->setupDatabaseConnection();
+
             throw new \Exception('Hello world');
         } catch (\Exception $e) {
             $viewFactory
@@ -54,6 +58,36 @@ class Application {
                         'errorMessage' => $e->getMessage()
                     ])
                 ->show();
+        }
+    }
+
+    /**
+     * Setup valid database connection
+     */
+    protected function setupDatabaseConnection()
+    {
+        $db = DBConnection::getInstance($this->config);
+
+        $db->query(
+            sprintf('SET NAMES "%s"', $this->config->dbEncoding)
+        );
+
+        $db->query(
+            sprintf('SET time_zone = "%s"', $this->config->dbTimezone)
+        );
+    }
+
+    protected function setupPhp()
+    {
+        $timezone = property_exists($this->config, 'timezone') ? $this->config->timezone : 'UTC';
+        $debug = property_exists($this->config, 'debug') ? $this->config->debug : false;
+
+        ini_set('date.timezone', $timezone);
+
+        if ($debug) {
+            error_reporting(E_ALL);
+        } else {
+            error_reporting(E_ERROR | E_PARSE);
         }
     }
 }
