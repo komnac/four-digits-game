@@ -8,7 +8,8 @@
 
 Создайте БД и пользователя:
 
-```mysql -uroot -e "
+```
+mysql -uroot -e "
 CREATE DATABASE dg;
 GRANT ALL PRIVILEGES ON dg.* TO dg@'%' IDENTIFIED BY '123';
 FLUSH PRIVILEGES;"
