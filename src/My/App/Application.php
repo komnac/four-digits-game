@@ -4,6 +4,8 @@ namespace My\App;
 
 use My\App\Database\Connection as DBConnection;
 use My\App\View\Factory as ViewFactory;
+use My\App\Controller\FourdigitsController;
+use My\App\Input\FourdigitsInput;
 
 /**
  * Main Application
@@ -12,7 +14,7 @@ class Application {
     private $config;
 
     /**
-     * @param $configPath path where config file located
+     * @param $configPath path to config file
      *
      * @throws \Exception when configuration file path not specified
      */
@@ -47,8 +49,7 @@ class Application {
         try {
             $this->setupPhp();
             $this->setupDatabaseConnection();
-
-            throw new \Exception('Hello world');
+            $this->getController()->exec();
         } catch (\Exception $e) {
             ViewFactory::factory(
                     'error',
@@ -96,5 +97,48 @@ class Application {
         }
 
         ini_set('date.timezone', $timezone);
+    }
+
+    /**
+     * Return contoller.
+     *
+     * @return My\App\Controller\Controller
+     *
+     * @todo add dynamic logic by (like mapping path to controller via config)
+     */
+    protected function getController()
+    {
+        $requestData = $this->getRequestData();
+
+        return new FourdigitsController($requestData);
+    }
+
+    /**
+     * Return setuped StrongAccessor input data.
+     *  Now only 1 FourdigitsInput supported.
+     *
+     * @return My\App\Model\FourdigitsInput
+     *
+     * @todo add dynamic logic (for example via config route file)
+     */
+    protected function getRequestData()
+    {
+        if (self::isCli()) {
+            $phone   = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : null;
+            $message = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
+        } else {
+            $phone   = isset($_REQUEST['tel']) ? $_REQUEST['tel'] : null;
+            $message = isset($_REQUEST['msg']) ? $_REQUEST['msg'] : '';
+        }
+
+        if (is_null($phone)) {
+            throw new \RuntimeException("Не задан телефонный номер!");
+        }
+
+        $input = new FourdigitsInput();
+        $input->phone = $phone;
+        $input->message = $message;
+
+        return $input;
     }
 }
