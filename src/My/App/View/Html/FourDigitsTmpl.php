@@ -26,10 +26,10 @@
     <div class="row">
         <div class="col-md-3"></div>
         <form>
-            <input type="hidden" id="tel" name="tel" value="<?php echo $this->data->phone ?>"/>
             <div class="col-md-4 col-xs-8 form-group">
-                <input type="text" id="msg" name="msg" class="form-control" placeholder="Ответ">
+                <input type="text" autofocus id="msg" name="msg" class="form-control" placeholder="Ответ">
             </div>
+            <input type="hidden" id="tel" name="tel" value="<?php echo $this->data->phone ?>"/>
             <div class="col-md-2 col-xs-4">
                 <button type="submit" class="btn btn-primary">Отправить</button>
             </div>
