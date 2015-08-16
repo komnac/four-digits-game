@@ -32,7 +32,7 @@ class Application {
      *
      * @return bool TRUE if in CLI mode; FALSE otherwise
      */
-    public function isCli()
+    public static function isCli()
     {
         return defined('STDIN');
     }
@@ -44,17 +44,16 @@ class Application {
      */
     public function run()
     {
-        $viewFactory = new ViewFactory();
-        $viewFactory->setType($this->isCli() ? 'cli' : 'html');
-
         try {
             $this->setupPhp();
             $this->setupDatabaseConnection();
 
             throw new \Exception('Hello world');
         } catch (\Exception $e) {
-            $viewFactory
-                ->getView('error')
+            ViewFactory::factory(
+                    'error',
+                    self::isCli() ? 'cli' : 'html'
+                )
                 ->setData(
                     [
                         'errorMessage' => $e->getMessage()
