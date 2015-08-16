@@ -24,9 +24,11 @@ abstract class QuizGenerator {
      */
     final public function generate()
     {
+        $shuffle = str_shuffle($this->getAlphabet());
+
         $word = substr(
-            str_shuffle($this->getAlphabet()),
-            0,
+            $shuffle,
+            ($shuffle[0] === 0) ? 1 : 0,
             $this->getSize()
         );
 

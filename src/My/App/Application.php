@@ -125,10 +125,10 @@ class Application {
     {
         if (self::isCli()) {
             $phone   = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : null;
-            $message = isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '';
+            $message = isset($_SERVER['argv'][2]) ? (string) $_SERVER['argv'][2] : '';
         } else {
             $phone   = isset($_REQUEST['tel']) ? $_REQUEST['tel'] : null;
-            $message = isset($_REQUEST['msg']) ? $_REQUEST['msg'] : '';
+            $message = isset($_REQUEST['msg']) ? (string) $_REQUEST['msg'] : '';
         }
 
         if (is_null($phone)) {

@@ -4,17 +4,15 @@ namespace My\Game;
 
 class QuizMatch {
     private $quest;
-    private $match;
+    private $answer;
 
     private $bulls = 0;
     private $cows  = 0;
 
-    private $matchMessage = '%s: %u быков, %u коров';
-
-    public function __construct(Quiz $quiz, Word $match)
+    public function __construct(Quiz $quiz, Word $answer)
     {
-        $this->quest = $quiz->getQuestWord();
-        $this->match = $match->truncate($this->quest->getLength());
+        $this->quest  = $quiz->getQuestWord();
+        $this->answer = $answer->truncate($this->quest->getLength());
 
         $this->doMatch();
     }
@@ -39,32 +37,40 @@ class QuizMatch {
         return $this->cows;
     }
 
-    /**
-     * Set in printf format output match string.
-     *
-     * @param string $message printf format message, where 1 param (%s) qiuz number, 2 - bulls, 3 - cows
-     *
-     * @return self
+    /*
+     * Return an answer string.
      */
-    public function setOutputString($message)
+    public function getAnswer()
     {
-        $this->matchMessage = $message;
-
-        return $this;
+        return $this->answer;
     }
 
     public function __toString()
     {
+        if ($this->isFullMatched()) {
+            return sprintf('%s', $this->getAnswer());
+        }
+
         return sprintf(
-            $this->matchMessage,
-            (string) $this->quest,
-            $this->getBulls(),
-            $this->getCows()
+            '%s: %s, %s',
+            $this->getAnswer(),
+            $this->digitString(
+                $this->getBulls(),
+                'бык',
+                'быка',
+                'быков'
+            ),
+            $this->digitString(
+                $this->getCows(),
+                'корова',
+                'коровы',
+                'коров'
+            )
         );
     }
 
     /**
-     * Return a full match quiz status.
+     * Return a full answer quiz status.
      *
      * @return bool TRUE when quiz completely matched; FALSE otherwise
      */
@@ -76,7 +82,7 @@ class QuizMatch {
     private function doMatch()
     {
         $quest = $this->quest->getChars();
-        $match = $this->match->getChars();
+        $match = $this->answer->getChars();
 
         foreach ($match as $charPosition => $char) {
             if (in_array($char, $quest)) {
@@ -87,5 +93,22 @@ class QuizMatch {
                 }
             }
         }
+    }
+
+    private function digitString($number, $isOne, $isTwoThreeFour, $default)
+    {
+        $lastDigit = substr($number, -1);
+        if ($lastDigit > 0 && $lastDigit < 5) {
+            $last2Digits = substr($number, -2);
+            if ($last2Digits > 20 || $last2Digits < 10 ) {
+                if ($lastDigit == 1) {
+                    return sprintf('%u %s', $number, $isOne);
+                } else {
+                    return sprintf('%u %s', $number, $isTwoThreeFour);
+                }
+            }
+        }
+
+        return sprintf('%u %s', $number, $default);
     }
 }

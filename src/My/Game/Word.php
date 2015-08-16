@@ -29,7 +29,7 @@ class Word
 
     public function __toString()
     {
-        return $this->word;
+        return (string) $this->word;
     }
 
     /**
