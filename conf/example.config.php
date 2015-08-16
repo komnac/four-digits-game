@@ -8,7 +8,7 @@ class Config
     public $timezone = 'Europe/Moscow';
 
     public $dbHost = 'localhost';
-    public $dbUser = 'dg1';
+    public $dbUser = 'dg';
     public $dbPass = '123';
     public $dbName = 'dg';
 

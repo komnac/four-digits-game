@@ -1,4 +1,6 @@
 .idea
 .DS_Store
+conf/*
+!conf/example.config.php
 */.DS_Store
 vendor
