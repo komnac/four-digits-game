@@ -13,6 +13,8 @@ mysql -uroot -e "
 CREATE DATABASE dg;
 GRANT ALL PRIVILEGES ON dg.* TO dg@'%' IDENTIFIED BY '123';
 FLUSH PRIVILEGES;"
+
+mysql -udg -p123 dg < _install/database.sql
 ```
 
 Скопируйте файл `conf/example.config.php` в `conf/config.php` и поправьте параметры подключения к БД.
